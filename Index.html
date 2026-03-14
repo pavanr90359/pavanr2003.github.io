@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pavan R — Film Director</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:  #e8dfc8;
+  --paper2: #d9cead;
+  --paper3: #c8b98a;
+  --ink:    #1a1208;
+  --ink2:   #2e2210;
+  --sepia:  #7a5c2e;
+  --sepia2: #4a3618;
+  --fade:   #9a8060;
+  --ghost:  #b8a882;
+  --red:    #8b1a1a;
+  --red2:   #5a0f0f;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+/* CURSOR */
+*{cursor:none!important;}
+#cur{position:fixed;width:10px;height:10px;background:var(--ink);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:transform .08s,background .2s;}
+#cur-ring{position:fixed;width:32px;height:32px;border:1.5px solid rgba(26,18,8,0.4);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .25s,height .25s,border-color .25s;}
+.cur-grow #cur{transform:translate(-50%,-50%) scale(2.5);background:var(--red);}
+.cur-grow #cur-ring{width:52px;height:52px;border-color:rgba(139,26,26,0.6);}
+
+/* BODY */
+body{background:var(--ink);color:var(--ink);font-family:'Courier Prime','Courier New',monospace;font-size:15px;line-height:1.75;overflow-x:hidden;}
+
+/* SCAN LINES */
+body::before{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(26,18,8,0.018) 2px,rgba(26,18,8,0.018) 4px);}
+
+/* PROJECTOR FLICKER */
+@keyframes flicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.93}94%{opacity:1}97%{opacity:.97}98%{opacity:1}}
+.page-wrap{animation:flicker 7s infinite;}
+
+/* VIGNETTE */
+.vignette{position:fixed;inset:0;z-index:9997;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 52%,rgba(10,7,3,0.7) 100%);}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:500;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 3.5rem;background:linear-gradient(to bottom,rgba(14,10,4,0.97),transparent);}
+.nav-logo{font-family:'Special Elite',cursive;font-size:15px;letter-spacing:.12em;color:var(--paper);text-decoration:none;text-transform:uppercase;}
+.nav-links{display:flex;gap:2.5rem;}
+.nav-links a{font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:.18em;color:var(--ghost);text-decoration:none;text-transform:uppercase;transition:color .3s;}
+.nav-links a:hover{color:var(--paper);}
+
+/* HERO */
+.hero{min-height:100vh;background:var(--ink);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3.5rem 5rem;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(122,92,46,0.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(139,26,26,0.05) 0%,transparent 40%),linear-gradient(175deg,#0e0a04 0%,#1a1208 40%,#0e0a04 100%);}
+
+/* sprocket holes */
+.sprk{position:absolute;top:0;bottom:0;width:30px;background:repeating-linear-gradient(to bottom,transparent 0,transparent 18px,rgba(232,223,200,0.06) 18px,rgba(232,223,200,0.06) 34px,transparent 34px,transparent 52px);}
+.sprk-l{left:0;border-right:1px solid rgba(232,223,200,0.04);}
+.sprk-r{right:0;border-left:1px solid rgba(232,223,200,0.04);}
+
+/* cigarette burn */
+.burn{position:absolute;top:14%;right:9%;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle,rgba(232,223,200,0.07) 0%,rgba(139,26,26,0.1) 45%,transparent 70%);border:1px solid rgba(232,223,200,0.05);}
+
+/* scratch lines */
+.scr{position:absolute;left:0;right:0;height:1px;background:rgba(232,223,200,0.035);}
+
+/* circle badge */
+.hero-badge{position:absolute;top:50%;right:3.5rem;transform:translateY(-50%);width:112px;height:112px;border:1px solid rgba(232,223,200,0.1);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;}
+.hero-badge::before{content:'';position:absolute;inset:7px;border:1px solid rgba(232,223,200,0.05);border-radius:50%;}
+.badge-txt{font-family:'Special Elite',cursive;font-size:8px;letter-spacing:.2em;color:var(--fade);text-transform:uppercase;text-align:center;line-height:1.5;}
+.badge-yr{font-family:'Courier Prime',monospace;font-size:17px;font-weight:700;color:var(--paper3);margin-top:4px;}
+
+.hero-date{font-family:'Courier Prime',monospace;font-size:10px;letter-spacing:.28em;color:var(--fade);text-transform:uppercase;margin-bottom:.8rem;position:relative;z-index:2;}
+.hero-rule{width:80px;height:1px;background:linear-gradient(to right,var(--sepia),transparent);margin-bottom:1.5rem;position:relative;z-index:2;}
+.hero-title{font-family:'Special Elite',cursive;font-size:clamp(4.5rem,10vw,9rem);line-height:.88;letter-spacing:.02em;color:var(--paper);position:relative;z-index:2;text-shadow:3px 3px 0 rgba(26,18,8,0.55),1px 1px 0 rgba(122,92,46,0.25);}
+.hero-title .hl-outline{-webkit-text-stroke:1px rgba(232,223,200,0.18);color:transparent;display:block;}
+.hero-title .hl-solid{color:var(--paper);display:block;}
+.hero-tagline{margin-top:1.8rem;font-family:'Libre Baskerville',Georgia,serif;font-size:.98rem;font-style:italic;color:var(--ghost);max-width:480px;line-height:1.7;position:relative;z-index:2;border-left:2px solid var(--sepia);padding-left:1.2rem;}
+.hero-credits{margin-top:2.5rem;display:flex;gap:2.8rem;position:relative;z-index:2;}
+.hc-item{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:.2em;color:var(--fade);text-transform:uppercase;}
+.hc-item span{display:block;margin-top:3px;font-size:12px;color:var(--paper2);letter-spacing:.07em;}
+
+/* PAGE SECTION (aged paper) */
+.page-section{background:var(--paper);position:relative;overflow:hidden;}
+.page-section::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.55;}
+.ps-inner{padding:5rem 3.5rem;position:relative;z-index:1;}
+
+/* shared section header */
+.s-eyebrow{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:.35em;color:var(--sepia);text-transform:uppercase;margin-bottom:.9rem;}
+.s-title{font-family:'Special Elite',cursive;font-size:clamp(2rem,4vw,3.2rem);line-height:1.05;margin-bottom:1.8rem;text-shadow:1px 1px 0 rgba(122,92,46,0.18);}
+.s-title-light{color:var(--paper);text-shadow:2px 2px 0 rgba(10,7,3,0.55);}
+.s-title-dark{color:var(--ink);}
+.ornament{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;}
+.orn-line{flex:1;height:1px;opacity:.35;}
+.orn-line-dark{background:var(--sepia);}
+.orn-line-light{background:var(--ghost);}
+.orn-mark{font-family:'Special Elite',cursive;font-size:14px;opacity:.65;}
+.orn-mark-dark{color:var(--sepia);}
+.orn-mark-light{color:var(--ghost);}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+.about-body p{font-family:'Libre Baskerville',serif;font-size:.93rem;color:var(--ink2);margin-bottom:1.1rem;line-height:1.85;}
+.about-body strong{color:var(--ink);}
+.about-pullquote{font-family:'Libre Baskerville',serif;font-size:1.25rem;font-style:italic;color:var(--sepia2);line-height:1.55;border-left:3px double var(--sepia);padding-left:1.4rem;margin:2rem 0;}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.5rem;}
+.tag{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--sepia2);border:1px solid var(--paper3);background:rgba(122,92,46,0.05);padding:5px 12px;transition:background .25s,border-color .25s;}
+.tag:hover{background:rgba(122,92,46,0.13);border-color:var(--sepia);}
+
+.stats-col{display:flex;flex-direction:column;}
+.stat-row{display:flex;align-items:baseline;gap:1rem;padding:1.15rem 0;border-bottom:1px solid rgba(122,92,46,0.18);}
+.stat-row:first-child{border-top:1px solid rgba(122,92,46,0.18);}
+.stat-num{font-family:'Special Elite',cursive;font-size:2.8rem;color:var(--ink);line-height:1;min-width:58px;text-align:right;text-shadow:2px 2px 0 rgba(122,92,46,0.12);}
+.stat-lbl{font-family:'Courier Prime',monospace;font-size:10px;letter-spacing:.17em;color:var(--sepia);text-transform:uppercase;line-height:1.4;}
+.dob-strip{margin-top:1.8rem;padding:.9rem 1.2rem;border:1px solid var(--paper3);background:rgba(122,92,46,0.04);font-family:'Courier Prime',monospace;font-size:10px;letter-spacing:.14em;color:var(--fade);text-transform:uppercase;display:flex;justify-content:space-between;}
+.dob-strip span{color:var(--ink2);}
+
+/* FILMS */
+#films{padding:5rem 3.5rem;}
+.films-list{display:flex;flex-direction:column;}
+.film-entry{display:grid;grid-template-columns:56px 1fr auto;gap:1.8rem;align-items:start;padding:2rem .5rem;border-bottom:1px solid rgba(232,223,200,0.08);transition:background .3s;}
+.film-entry:first-child{border-top:1px solid rgba(232,223,200,0.08);}
+.film-entry:hover{background:rgba(232,223,200,0.025);}
+.film-num{font-family:'Special Elite',cursive;font-size:2.2rem;color:rgba(232,223,200,0.1);line-height:1;padding-top:.25rem;}
+.film-meta-label{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:.2em;color:var(--fade);text-transform:uppercase;margin-bottom:.5rem;}
+.film-name{font-family:'Special Elite',cursive;font-size:2rem;color:var(--paper);line-height:1;margin-bottom:.55rem;text-shadow:2px 2px 0 rgba(10,7,3,0.5);}
+.film-synopsis{font-family:'Libre Baskerville',serif;font-size:.87rem;font-style:italic;color:var(--ghost);line-height:1.7;max-width:520px;}
+.film-badge{font-family:'Courier Prime',monospace;font-size:8px;letter-spacing:.17em;text-transform:uppercase;padding:5px 10px;border:1px solid rgba(139,26,26,0.45);background:rgba(139,26,26,0.1);color:#c87070;white-space:nowrap;align-self:center;}
+
+/* CRAFT */
+.craft-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--paper3);margin-top:2.5rem;}
+.craft-item{padding:2rem 1.5rem;border-right:1px solid var(--paper3);transition:background .3s;}
+.craft-item:last-child{border-right:none;}
+.craft-item:hover{background:rgba(122,92,46,0.07);}
+.craft-num{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:.24em;color:var(--ghost);margin-bottom:1rem;display:block;}
+.craft-name{font-family:'Special Elite',cursive;font-size:1.1rem;color:var(--ink);display:block;margin-bottom:.45rem;}
+.craft-desc{font-family:'Libre Baskerville',serif;font-size:.8rem;font-style:italic;color:var(--fade);line-height:1.6;}
+
+/* CONTACT */
+#contact{padding:5rem 3.5rem;background:var(--ink2);position:relative;overflow:hidden;}
+#contact::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 100%,rgba(139,26,26,0.07) 0%,transparent 60%);}
+.contact-big{font-family:'Special Elite',cursive;font-size:clamp(3rem,7vw,6rem);line-height:.9;color:var(--paper);margin-bottom:2.5rem;position:relative;z-index:1;text-shadow:3px 3px 0 rgba(10,7,3,0.7);}
+.contact-big .ghost{display:block;color:transparent;-webkit-text-stroke:1px rgba(232,223,200,0.14);}
+.contact-card{display:flex;flex-direction:column;border:1px solid rgba(232,223,200,0.09);max-width:560px;position:relative;z-index:1;}
+.contact-row{display:flex;align-items:center;gap:2rem;padding:1.2rem 1.5rem;border-bottom:1px solid rgba(232,223,200,0.06);text-decoration:none;color:var(--paper);transition:background .3s;}
+.contact-row:last-child{border-bottom:none;}
+.contact-row:hover{background:rgba(232,223,200,0.04);}
+.c-lbl{font-family:'Courier Prime',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--fade);min-width:80px;}
+.c-val{font-family:'Libre Baskerville',serif;font-size:.95rem;color:var(--ghost);transition:color .3s;}
+.contact-row:hover .c-val{color:var(--paper);}
+
+/* FOOTER */
+footer{background:var(--ink);padding:1.8rem 3.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(232,223,200,0.05);}
+.foot-copy{font-family:'Courier Prime',monospace;font-size:9px;letter-spacing:.17em;color:var(--sepia);text-transform:uppercase;}
+.foot-mark{font-family:'Special Elite',cursive;font-size:1.1rem;color:var(--paper3);text-shadow:1px 1px 0 rgba(10,7,3,0.5);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.hero-date,.hero-rule,.hero-title,.hero-tagline,.hero-credits{animation:fadeUp .9s ease both;}
+.hero-date{animation-delay:.2s}.hero-rule{animation-delay:.35s}.hero-title{animation-delay:.5s}.hero-tagline{animation-delay:.7s}.hero-credits{animation-delay:.88s}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  nav{padding:1rem 1.5rem;}
+  .hero{padding:0 1.5rem 4rem;}
+  .hero-badge{display:none;}
+  .ps-inner,#films,#contact{padding:4rem 1.5rem;}
+  .about-grid{grid-template-columns:1fr;gap:3rem;}
+  .craft-grid{grid-template-columns:1fr 1fr;}
+  .film-entry{grid-template-columns:40px 1fr;}.film-badge{display:none;}
+  footer{flex-direction:column;gap:1rem;text-align:center;}
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+<div class="vignette"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Pavan R</a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#films">Films</a>
+    <a href="#craft">Craft</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="sprk sprk-l"></div>
+  <div class="sprk sprk-r"></div>
+  <div class="burn"></div>
+  <div class="scr" style="top:22%"></div>
+  <div class="scr" style="top:57%"></div>
+  <div class="scr" style="top:80%"></div>
+
+  <div class="hero-badge">
+    <div class="badge-txt">Aspiring<br>Director</div>
+    <div class="badge-yr">2025</div>
+  </div>
+
+  <div class="hero-date">Est. 30 · Aug · 2003 &nbsp;—&nbsp; India</div>
+  <div class="hero-rule"></div>
+  <h1 class="hero-title">
+    <span class="hl-outline">Pavan</span>
+    <span class="hl-solid">R</span>
+  </h1>
+  <p class="hero-tagline">
+    Film Director &nbsp;·&nbsp; Screenwriter &nbsp;·&nbsp; Editor.<br>
+    Crafting raw, visceral narratives that interrogate the human condition — one frame at a time.
+  </p>
+  <div class="hero-credits">
+    <div class="hc-item">Role<span>Director</span></div>
+    <div class="hc-item">Medium<span>Screenplay</span></div>
+    <div class="hc-item">Tool<span>DaVinci Resolve</span></div>
+    <div class="hc-item">Scripts<span>3 Ongoing</span></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<div class="page-section" id="about">
+  <div class="ps-inner">
+    <div class="s-eyebrow">— Act I</div>
+    <h2 class="s-title s-title-dark">The Man Behind<br>the Lens</h2>
+    <div class="ornament">
+      <div class="orn-line orn-line-dark"></div>
+      <div class="orn-mark orn-mark-dark">✦</div>
+      <div class="orn-line orn-line-dark"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-body">
+        <p>I am <strong>Pavan R</strong> — an aspiring filmmaker, director, and screenwriter driven by the belief that cinema is the most potent language of the human soul. Born on August 30, 2003, I began crafting stories long before I ever stepped behind a camera.</p>
+        <p>My scripts are not entertainment. They are <strong>confrontations</strong> — with society, with identity, with the unspoken truths that fester beneath the surface of ordinary life. Every script I write begins with a single question: <em>what are we too afraid to say?</em></p>
+        <blockquote class="about-pullquote">
+          "Stories don't mirror reality.<br>They illuminate what reality hides."
+        </blockquote>
+        <p>I am also a proficient <strong>DaVinci Resolve editor</strong>, bringing the same obsessive attention to detail in the cutting room that I demand on set. Color, rhythm, silence — they are all part of the language.</p>
+        <div class="tag-row">
+          <span class="tag">Direction</span>
+          <span class="tag">Screenwriting</span>
+          <span class="tag">Editing</span>
+          <span class="tag">DaVinci Resolve</span>
+          <span class="tag">Story Dev</span>
+          <span class="tag">Visual Language</span>
+        </div>
+      </div>
+      <div>
+        <div class="stats-col">
+          <div class="stat-row">
+            <div class="stat-num">3</div>
+            <div class="stat-lbl">Scripts<br>Ongoing</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-num">22</div>
+            <div class="stat-lbl">Years<br>of Age</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-num">∞</div>
+            <div class="stat-lbl">Stories<br>to Tell</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-num">1</div>
+            <div class="stat-lbl">Vision,<br>Uncompromised</div>
+          </div>
+        </div>
+        <div class="dob-strip">
+          <span>Date of Birth</span>
+          <span>30 / 08 / 2003</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILMS -->
+<section id="films">
+  <div class="s-eyebrow" style="color:var(--fade);">— Act II</div>
+  <h2 class="s-title s-title-light">The Scripts</h2>
+  <div class="ornament">
+    <div class="orn-line orn-line-light"></div>
+    <div class="orn-mark orn-mark-light">✦</div>
+    <div class="orn-line orn-line-light"></div>
+  </div>
+  <div class="films-list">
+
+    <div class="film-entry">
+      <div class="film-num">01</div>
+      <div>
+        <div class="film-meta-label">Drama · Original Screenplay</div>
+        <h3 class="film-name">Dhriyar</h3>
+        <p class="film-synopsis">A script forging its identity — uncompromising, precise, and deeply felt. The story that started everything. A voice finding its register in the dark.</p>
+      </div>
+      <div class="film-badge">● Ongoing</div>
+    </div>
+
+    <div class="film-entry">
+      <div class="film-num">02</div>
+      <div>
+        <div class="film-meta-label">Active Script · In Progress</div>
+        <h3 class="film-name">RAW</h3>
+        <p class="film-synopsis">The current obsession. A story stripped of all pretense — exposing something fundamental, ugly, and true about the world we inhabit. No filters. No mercy.</p>
+      </div>
+      <div class="film-badge">● Ongoing</div>
+    </div>
+
+    <div class="film-entry">
+      <div class="film-num">03</div>
+      <div>
+        <div class="film-meta-label">Script · Taking Shape</div>
+        <h3 class="film-name" style="color:rgba(232,223,200,0.38);">Untitled</h3>
+        <p class="film-synopsis">The third work gestating in silence. Every great story begins as a feeling without a name — this one is still becoming itself.</p>
+      </div>
+      <div class="film-badge">● Ongoing</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CRAFT -->
+<div class="page-section" id="craft">
+  <div class="ps-inner">
+    <div class="s-eyebrow">— Act III</div>
+    <h2 class="s-title s-title-dark">The Craft</h2>
+    <div class="ornament">
+      <div class="orn-line orn-line-dark"></div>
+      <div class="orn-mark orn-mark-dark">✦</div>
+      <div class="orn-line orn-line-dark"></div>
+    </div>
+    <div class="craft-grid">
+      <div class="craft-item">
+        <span class="craft-num">No. 01</span>
+        <span class="craft-name">Direction</span>
+        <span class="craft-desc">Visual storytelling, blocking, performance — the geometry of a scene.</span>
+      </div>
+      <div class="craft-item">
+        <span class="craft-num">No. 02</span>
+        <span class="craft-name">Screenwriting</span>
+        <span class="craft-desc">Structure, dialogue, subtext — the architecture of silence.</span>
+      </div>
+      <div class="craft-item">
+        <span class="craft-num">No. 03</span>
+        <span class="craft-name">DaVinci Resolve</span>
+        <span class="craft-desc">Color grading, cutting, post — the alchemy of the edit.</span>
+      </div>
+      <div class="craft-item">
+        <span class="craft-num">No. 04</span>
+        <span class="craft-name">Story Dev</span>
+        <span class="craft-desc">Character arcs, theme, world — the logic of obsession.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="s-eyebrow" style="color:var(--fade);">— Finale</div>
+  <h2 class="contact-big">
+    Let's Make<br>
+    <span class="ghost">Something</span>
+    Real.
+  </h2>
+  <p style="font-family:'Libre Baskerville',serif;font-style:italic;color:var(--ghost);margin-bottom:2rem;font-size:.93rem;max-width:400px;position:relative;z-index:1;line-height:1.7;">
+    Open to collaborations, conversations, and any project that refuses to play it safe.
+  </p>
+  <div class="contact-card">
+    <a class="contact-row" href="mailto:pavanrhebbari@gmail.com">
+      <span class="c-lbl">Email</span>
+      <span class="c-val">pavanrhebbari@gmail.com</span>
+    </a>
+    <a class="contact-row" href="https://www.instagram.com/pavan.r___?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">
+      <span class="c-lbl">Instagram</span>
+      <span class="c-val">@pavan.r___</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="foot-copy">© 2025 Pavan R — All Rights Reserved</p>
+  <span class="foot-mark">Pavan R</span>
+  <p class="foot-copy">Film · Story · Vision</p>
+</footer>
+
+</div>
+
+<script>
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,.film-entry,.craft-item,.tag').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('cur-grow'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('cur-grow'));
+});
+</script>
+</body>
+</html>
